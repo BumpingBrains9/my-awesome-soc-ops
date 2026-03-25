@@ -8,9 +8,9 @@ export interface BingoSquareData {
 }
 
 export interface BingoLine {
-  type: 'row' | 'column' | 'diagonal' | 'corners';
+  type: "row" | "column" | "diagonal" | "corners";
   index: number;
   squares: number[];
 }
 
-export type GameState = 'start' | 'playing' | 'bingo';
+export type GameState = "start" | "playing";

@@ -26,15 +26,16 @@ export function StartScreen({ onStart }: StartScreenProps) {
           Social Icebreaker
         </p>
         <h1 className="font-display text-center text-6xl leading-none text-ink drop-shadow-[0_10px_32px_#ff7fc8a0] sm:text-7xl">
-          Bingo
+          Card Deck
           <br />
-          Mixer
+          Shuffle
         </h1>
         <p className="mt-4 text-sm font-extrabold uppercase tracking-[0.22em] text-accent-light drop-shadow-[0_2px_12px_#ff7fc860]">
           Vaporwave Sunset
         </p>
         <p className="mt-3 max-w-[22ch] text-center text-sm font-bold text-ink-muted">
-          Turn any room into instant connections — one bingo square at a time.
+          Open the game, tap to draw, and get one instant question card to spark
+          conversation.
         </p>
       </div>
 
@@ -44,21 +45,21 @@ export function StartScreen({ onStart }: StartScreenProps) {
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-xl border border-ink/20 bg-surface-elevated/85 px-3 py-2 text-center">
             <p className="text-[9px] font-extrabold uppercase tracking-[0.15em] text-ink-muted">
-              Grid
+              Mode
             </p>
-            <p className="mt-1 text-sm font-extrabold text-ink">5 × 5</p>
+            <p className="mt-1 text-sm font-extrabold text-ink">Card draw</p>
           </div>
           <div className="rounded-xl border border-ink/20 bg-surface-elevated/85 px-3 py-2 text-center">
             <p className="text-[9px] font-extrabold uppercase tracking-[0.15em] text-ink-muted">
-              Players
+              Questions
             </p>
-            <p className="mt-1 text-sm font-extrabold text-ink">Any size</p>
+            <p className="mt-1 text-sm font-extrabold text-ink">Shuffled</p>
           </div>
           <div className="rounded-xl border border-ink/20 bg-surface-elevated/85 px-3 py-2 text-center">
             <p className="text-[9px] font-extrabold uppercase tracking-[0.15em] text-ink-muted">
-              Win
+              Flow
             </p>
-            <p className="mt-1 text-sm font-extrabold text-ink">5 in row</p>
+            <p className="mt-1 text-sm font-extrabold text-ink">Tap to draw</p>
           </div>
         </div>
 
@@ -68,9 +69,9 @@ export function StartScreen({ onStart }: StartScreenProps) {
             How It Works
           </h2>
           <ul className="space-y-2.5 text-sm font-bold text-ink-muted">
-            <li>• Find someone who matches each prompt.</li>
-            <li>• Tap the square to lock in your match.</li>
-            <li>• Complete any full line to call bingo.</li>
+            <li>• Start the deck for your group.</li>
+            <li>• Tap the draw button to flip one random card.</li>
+            <li>• Use the question to kick off a quick intro chat.</li>
           </ul>
         </div>
 
@@ -79,11 +80,11 @@ export function StartScreen({ onStart }: StartScreenProps) {
           onClick={onStart}
           className="mt-6 w-full rounded-2xl border border-accent-light/70 bg-accent px-8 py-4 text-lg font-extrabold text-white shadow-[0_12px_28px_#ff4da47a] transition-all duration-150 active:scale-[0.99] active:bg-accent-light"
         >
-          Start Mixer
+          Start Deck
         </button>
 
         <p className="mt-4 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-ink-muted/80">
-          Meet people faster • Keep it playful • Celebrate every line
+          One tap • One question • One new connection
         </p>
       </div>
     </div>

@@ -1,92 +1,86 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import type { BingoSquareData, BingoLine, GameState } from '../types';
-import {
-  generateBoard,
-  toggleSquare,
-  checkBingo,
-  getWinningSquareIds,
-} from '../utils/bingoLogic';
+import { useState, useCallback, useMemo, useEffect } from "react";
+import type { GameState } from "../types";
+import { questions } from "../data/questions";
 
 export interface BingoGameState {
   gameState: GameState;
-  board: BingoSquareData[];
-  winningLine: BingoLine | null;
-  winningSquareIds: Set<number>;
-  showBingoModal: boolean;
+  currentCard: string | null;
+  remainingCards: number;
+  totalCards: number;
 }
 
 export interface BingoGameActions {
   startGame: () => void;
-  handleSquareClick: (squareId: number) => void;
+  drawCard: () => void;
   resetGame: () => void;
-  dismissModal: () => void;
 }
 
-const STORAGE_KEY = 'bingo-game-state';
+const STORAGE_KEY = "card-deck-shuffle-state";
 const STORAGE_VERSION = 1;
 
 interface StoredGameData {
   version: number;
   gameState: GameState;
-  board: BingoSquareData[];
-  winningLine: BingoLine | null;
+  currentCard: string | null;
+  deckOrder: number[];
+  nextCardIndex: number;
 }
 
 function validateStoredData(data: unknown): data is StoredGameData {
-  if (!data || typeof data !== 'object') {
+  if (!data || typeof data !== "object") {
     return false;
   }
-  
+
   const obj = data as Record<string, unknown>;
-  
+
   if (obj.version !== STORAGE_VERSION) {
     return false;
   }
-  
-  if (typeof obj.gameState !== 'string' || !['start', 'playing', 'bingo'].includes(obj.gameState)) {
+
+  if (
+    typeof obj.gameState !== "string" ||
+    !["start", "playing"].includes(obj.gameState)
+  ) {
     return false;
   }
-  
-  if (!Array.isArray(obj.board) || (obj.board.length !== 0 && obj.board.length !== 25)) {
+
+  if (obj.currentCard !== null && typeof obj.currentCard !== "string") {
     return false;
   }
-  
-  const validSquares = obj.board.every((sq: unknown) => {
-    if (!sq || typeof sq !== 'object') return false;
-    const square = sq as Record<string, unknown>;
-    return (
-      typeof square.id === 'number' &&
-      typeof square.text === 'string' &&
-      typeof square.isMarked === 'boolean' &&
-      typeof square.isFreeSpace === 'boolean'
-    );
-  });
-  
-  if (!validSquares) {
+
+  if (
+    !Array.isArray(obj.deckOrder) ||
+    obj.deckOrder.some((entry) => typeof entry !== "number")
+  ) {
     return false;
   }
-  
-  if (obj.winningLine !== null) {
-    if (typeof obj.winningLine !== 'object') {
-      return false;
-    }
-    const line = obj.winningLine as Record<string, unknown>;
-    if (
-      typeof line.type !== 'string' ||
-      !['row', 'column', 'diagonal'].includes(line.type) ||
-      typeof line.index !== 'number' ||
-      !Array.isArray(line.squares)
-    ) {
-      return false;
-    }
+
+  if (typeof obj.nextCardIndex !== "number") {
+    return false;
   }
-  
+
   return true;
 }
 
-function loadGameState(): Pick<BingoGameState, 'gameState' | 'board' | 'winningLine'> | null {
+function createShuffledDeck(): number[] {
+  const deck = questions.map((_, index) => index);
+
+  for (let index = deck.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [deck[index], deck[swapIndex]] = [deck[swapIndex], deck[index]];
+  }
+
+  return deck;
+}
+
+function loadGameState():
+  | (Pick<BingoGameState, "gameState" | "currentCard"> & {
+      deckOrder: number[];
+      nextCardIndex: number;
+    })
+  | null {
   // SSR guard
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return null;
   }
 
@@ -97,20 +91,21 @@ function loadGameState(): Pick<BingoGameState, 'gameState' | 'board' | 'winningL
     }
 
     const parsed = JSON.parse(saved);
-    
+
     if (validateStoredData(parsed)) {
       return {
         gameState: parsed.gameState,
-        board: parsed.board,
-        winningLine: parsed.winningLine,
+        currentCard: parsed.currentCard,
+        deckOrder: parsed.deckOrder,
+        nextCardIndex: parsed.nextCardIndex,
       };
     } else {
-      console.warn('Invalid game state data in localStorage, clearing...');
+      console.warn("Invalid game state data in localStorage, clearing...");
       localStorage.removeItem(STORAGE_KEY);
     }
   } catch (error) {
-    console.warn('Failed to load game state:', error);
-    if (typeof window !== 'undefined') {
+    console.warn("Failed to load game state:", error);
+    if (typeof window !== "undefined") {
       localStorage.removeItem(STORAGE_KEY);
     }
   }
@@ -118,9 +113,14 @@ function loadGameState(): Pick<BingoGameState, 'gameState' | 'board' | 'winningL
   return null;
 }
 
-function saveGameState(gameState: GameState, board: BingoSquareData[], winningLine: BingoLine | null): void {
+function saveGameState(
+  gameState: GameState,
+  currentCard: string | null,
+  deckOrder: number[],
+  nextCardIndex: number,
+): void {
   // SSR guard
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return;
   }
 
@@ -128,84 +128,84 @@ function saveGameState(gameState: GameState, board: BingoSquareData[], winningLi
     const data: StoredGameData = {
       version: STORAGE_VERSION,
       gameState,
-      board,
-      winningLine,
+      currentCard,
+      deckOrder,
+      nextCardIndex,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (error) {
-    console.warn('Failed to save game state:', error);
+    console.warn("Failed to save game state:", error);
   }
 }
 
 export function useBingoGame(): BingoGameState & BingoGameActions {
   const loadedState = useMemo(() => loadGameState(), []);
 
+  const [deckOrder, setDeckOrder] = useState<number[]>(
+    () => loadedState?.deckOrder || [],
+  );
+  const [nextCardIndex, setNextCardIndex] = useState<number>(
+    () => loadedState?.nextCardIndex || 0,
+  );
   const [gameState, setGameState] = useState<GameState>(
-    () => loadedState?.gameState || 'start'
+    () => loadedState?.gameState || "start",
   );
-  const [board, setBoard] = useState<BingoSquareData[]>(
-    () => loadedState?.board || []
+  const [currentCard, setCurrentCard] = useState<string | null>(
+    () => loadedState?.currentCard || null,
   );
-  const [winningLine, setWinningLine] = useState<BingoLine | null>(
-    () => loadedState?.winningLine || null
-  );
-  const [showBingoModal, setShowBingoModal] = useState(false);
 
-  const winningSquareIds = useMemo(
-    () => getWinningSquareIds(winningLine),
-    [winningLine]
-  );
+  const remainingCards = useMemo(() => {
+    if (gameState !== "playing") {
+      return questions.length;
+    }
+
+    const cardsLeft = deckOrder.length - nextCardIndex;
+    return cardsLeft >= 0 ? cardsLeft : 0;
+  }, [deckOrder.length, gameState, nextCardIndex]);
+
+  const totalCards = questions.length;
 
   // Save game state to localStorage whenever it changes
   useEffect(() => {
-    saveGameState(gameState, board, winningLine);
-  }, [gameState, board, winningLine]);
+    saveGameState(gameState, currentCard, deckOrder, nextCardIndex);
+  }, [gameState, currentCard, deckOrder, nextCardIndex]);
 
   const startGame = useCallback(() => {
-    setBoard(generateBoard());
-    setWinningLine(null);
-    setGameState('playing');
+    setDeckOrder(createShuffledDeck());
+    setNextCardIndex(0);
+    setCurrentCard(null);
+    setGameState("playing");
   }, []);
 
-  const handleSquareClick = useCallback((squareId: number) => {
-    setBoard((currentBoard) => {
-      const newBoard = toggleSquare(currentBoard, squareId);
-      
-      // Check for bingo after toggling
-      const bingo = checkBingo(newBoard);
-      if (bingo && !winningLine) {
-        // Schedule state updates to avoid synchronous setState in effect
-        queueMicrotask(() => {
-          setWinningLine(bingo);
-          setGameState('bingo');
-          setShowBingoModal(true);
-        });
-      }
-      
-      return newBoard;
-    });
-  }, [winningLine]);
+  const drawCard = useCallback(() => {
+    if (gameState !== "playing") {
+      return;
+    }
+
+    const activeDeck =
+      nextCardIndex >= deckOrder.length ? createShuffledDeck() : deckOrder;
+    const activeIndex = nextCardIndex >= deckOrder.length ? 0 : nextCardIndex;
+    const questionIndex = activeDeck[activeIndex];
+
+    setDeckOrder(activeDeck);
+    setCurrentCard(questions[questionIndex]);
+    setNextCardIndex(activeIndex + 1);
+  }, [gameState, nextCardIndex, deckOrder]);
 
   const resetGame = useCallback(() => {
-    setGameState('start');
-    setBoard([]);
-    setWinningLine(null);
-    setShowBingoModal(false);
-  }, []);
-
-  const dismissModal = useCallback(() => {
-    setShowBingoModal(false);
+    setGameState("start");
+    setDeckOrder([]);
+    setNextCardIndex(0);
+    setCurrentCard(null);
   }, []);
 
   return {
     gameState,
-    board,
-    winningLine,
-    winningSquareIds,
-    showBingoModal,
+    currentCard,
+    remainingCards,
+    totalCards,
     startGame,
-    handleSquareClick,
+    drawCard,
     resetGame,
-    dismissModal,
   };
 }
