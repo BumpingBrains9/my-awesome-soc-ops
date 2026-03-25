@@ -4,15 +4,19 @@ interface BingoModalProps {
 
 export function BingoModal({ onDismiss }: BingoModalProps) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl p-6 max-w-xs w-full text-center shadow-xl animate-[bounce_0.5s_ease-out]">
-        <div className="text-5xl mb-4">🎉</div>
-        <h2 className="text-3xl font-bold text-amber-500 mb-2">BINGO!</h2>
-        <p className="text-gray-600 mb-6">You completed a line!</p>
-        
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay/95 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-xs rounded-3xl border border-accent-light/65 bg-surface-elevated/95 p-6 text-center shadow-[0_0_0_1px_#ffffff24,0_24px_60px_#0a0218c9] animate-[bounce_0.45s_ease-out]">
+        <div className="mb-4 text-5xl">🎉</div>
+        <h2 className="mb-2 font-display text-4xl text-bingo drop-shadow-[0_8px_24px_#ffb35c8f]">
+          BINGO!
+        </h2>
+        <p className="mb-6 text-base font-bold text-ink-muted">
+          You completed a line!
+        </p>
+
         <button
           onClick={onDismiss}
-          className="w-full bg-accent text-white font-semibold py-3 px-6 rounded-lg active:bg-accent-light transition-colors"
+          className="w-full rounded-2xl border border-accent-light/70 bg-accent px-6 py-3 text-base font-extrabold text-white shadow-[0_10px_26px_#ff4da674] transition-all duration-150 active:scale-[0.99] active:bg-accent-light"
         >
           Keep Playing
         </button>

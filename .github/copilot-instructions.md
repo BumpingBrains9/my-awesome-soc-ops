@@ -61,8 +61,33 @@
 
 Current `@theme` tokens in `src/index.css`:
 
-- `--color-accent` / `--color-accent-light` — primary blue, used for buttons and focus rings
-- `--color-marked` / `--color-marked-border` — green tint + border for marked squares
-- `--color-bingo` — amber highlight for winning squares
+- Typography: `--font-display` (`Righteous`) + `--font-body` (`Nunito`)
+- Surfaces: `--color-night`, `--color-surface`, `--color-surface-elevated`, `--color-surface-soft`
+- Text: `--color-ink`, `--color-ink-muted`
+- Accent: `--color-accent`, `--color-accent-light`, `--color-accent-deep`
+- Marked state: `--color-marked`, `--color-marked-border`, `--color-marked-ink`
+- Bingo state: `--color-bingo`, `--color-bingo-border`, `--color-bingo-ink`
+- Square defaults: `--color-square`, `--color-square-border`, `--color-square-active`, `--color-square-ink`
+- Overlay: `--color-overlay`
+
+Current atmospheric `:root` variables:
+
+- `--sunset-top`, `--sunset-mid`, `--sunset-low`, `--sunset-haze` — layered sunset gradient stops
+- `--vapor-grid` — subtle grid-line overlay tint
 
 When redesigning UI, follow the `frontend-design` skill: distinctive typography, committed color palette, avoid generic AI aesthetics. Prefer CSS-only animations; use the Motion library only if it is already a dependency.
+
+## Design Guide (Vaporwave Sunset)
+
+- **Theme intent**: dreamy sunset atmosphere + neon-accented UI, but keep gameplay readability first.
+- **Token-first styling**: use semantic token utilities (`bg-surface`, `text-ink`, `border-accent-light`, `bg-bingo`) instead of hard-coded color classes.
+- **Type hierarchy**: use `font-display` for key headings/labels and `font-body` for all long-form UI copy.
+- **Atmosphere pattern**: prefer layered gradient + low-opacity grid overlays; keep overlays `pointer-events-none` when decorative.
+- **Component consistency**:
+	- Start/Game shells: frosted surface cards over atmospheric background.
+	- Board: keep 5×5 structure and square aspect ratio; visual framing can evolve.
+	- Squares: preserve clear separation for default/marked/winning/free states.
+	- Modal: high contrast, concise copy, single primary CTA.
+- **Interaction language**: quick transitions (`duration-150` range), subtle press feedback (`active:scale-[0.99]`), and visible focus rings.
+- **Accessibility guardrails**: maintain strong contrast on text over gradients, keep tap targets large, keep semantic buttons and existing ARIA patterns.
+- **Do not change for style work**: bingo rules, localStorage schema, hook contracts, and component prop interfaces.

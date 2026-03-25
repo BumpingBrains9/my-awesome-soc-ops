@@ -1,11 +1,43 @@
-@import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@500;700;800&display=swap");
+@import "tailwindcss";
 
 @theme {
-  --color-accent: #2563eb;
-  --color-accent-light: #3b82f6;
-  --color-marked: #dcfce7;
-  --color-marked-border: #22c55e;
-  --color-bingo: #fbbf24;
+  --font-display: "Righteous", ui-sans-serif, sans-serif;
+  --font-body: "Nunito", ui-sans-serif, system-ui, sans-serif;
+
+  --color-night: #130629;
+  --color-surface: #2b1552;
+  --color-surface-elevated: #3a1d67;
+  --color-surface-soft: #4a2f79;
+  --color-ink: #fff4fb;
+  --color-ink-muted: #dcc8ff;
+
+  --color-accent: #ff4da6;
+  --color-accent-light: #ff7fc8;
+  --color-accent-deep: #d53e8c;
+
+  --color-marked: #3f2b75;
+  --color-marked-border: #6bd5ff;
+  --color-marked-ink: #def7ff;
+
+  --color-bingo: #ffb35c;
+  --color-bingo-border: #ffd58f;
+  --color-bingo-ink: #4d1e3f;
+
+  --color-square: #f9ecff;
+  --color-square-border: #c89af3;
+  --color-square-active: #efd8ff;
+  --color-square-ink: #4a2a6e;
+
+  --color-overlay: #0e041f99;
+}
+
+:root {
+  --sunset-top: #221244;
+  --sunset-mid: #5a2f8c;
+  --sunset-low: #ff6fa9;
+  --sunset-haze: #ffb86f;
+  --vapor-grid: #ffe9ff1f;
 }
 
 html,
@@ -16,6 +48,17 @@ body,
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at 20% 8%, #ff9bce66, transparent 42%),
+    radial-gradient(circle at 80% 6%, #9d7cff66, transparent 40%),
+    linear-gradient(
+      180deg,
+      var(--sunset-top) 0%,
+      var(--sunset-mid) 52%,
+      var(--sunset-low) 78%,
+      var(--sunset-haze) 100%
+    );
   -webkit-tap-highlight-color: transparent;
 }
