@@ -16,7 +16,7 @@ export function GameScreen({
   return (
     <div className="relative flex min-h-full flex-col overflow-hidden">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_96%,#ffd18830_0%,transparent_46%),radial-gradient(circle_at_86%_4%,#9f84ff36_0%,transparent_32%)]" />
-      <div className="pointer-events-none absolute inset-0 opacity-50 bg-[linear-gradient(var(--vapor-grid)_1px,transparent_1px),linear-gradient(90deg,var(--vapor-grid)_1px,transparent_1px)] bg-[size:34px_34px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-50 bg-[linear-gradient(var(--vapor-grid)_1px,transparent_1px),linear-gradient(90deg,var(--vapor-grid)_1px,transparent_1px)] bg-size-[34px_34px]" />
 
       <header className="relative z-10 m-3 mb-2 flex items-center justify-between rounded-2xl border border-ink/20 bg-surface/80 px-3 py-2 shadow-[0_12px_28px_#13032266] backdrop-blur-sm">
         <button
@@ -26,7 +26,7 @@ export function GameScreen({
           ← Back
         </button>
         <h1 className="font-display text-2xl text-ink">Card Deck Shuffle</h1>
-        <div className="w-[72px]" />
+        <div className="w-18" />
       </header>
 
       <p className="relative z-10 px-4 py-1 text-center text-sm font-bold text-ink-muted">
@@ -43,7 +43,7 @@ export function GameScreen({
             Drawn Card
           </p>
 
-          <p className="min-h-[110px] text-pretty text-xl font-extrabold leading-tight text-ink sm:min-h-[130px] sm:text-2xl">
+          <p className="min-h-27.5 text-pretty text-xl font-extrabold leading-tight text-ink sm:min-h-32.5 sm:text-2xl">
             {currentCard ?? "Tap DRAW CARD to reveal your first question."}
           </p>
 

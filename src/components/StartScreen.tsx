@@ -6,7 +6,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
   return (
     <div className="relative flex min-h-full flex-col overflow-hidden">
       {/* ── Atmospheric grid overlay ── */}
-      <div className="pointer-events-none absolute inset-0 opacity-50 bg-[linear-gradient(var(--vapor-grid)_1px,transparent_1px),linear-gradient(90deg,var(--vapor-grid)_1px,transparent_1px)] bg-[size:38px_38px]" />
+      <div className="pointer-events-none absolute inset-0 opacity-50 bg-[linear-gradient(var(--vapor-grid)_1px,transparent_1px),linear-gradient(90deg,var(--vapor-grid)_1px,transparent_1px)] bg-size-[38px_38px]" />
 
       {/* ── Top hero region ── */}
       <div className="relative flex min-h-[42vh] flex-col items-center justify-center px-6 pb-6 pt-10">
@@ -15,11 +15,11 @@ export function StartScreen({ onStart }: StartScreenProps) {
           className="pointer-events-none absolute inset-0 overflow-hidden"
           aria-hidden="true"
         >
-          <div className="absolute left-0 right-0 top-[18%] h-px bg-accent-light/[0.07]" />
-          <div className="absolute left-0 right-0 top-[32%] h-px bg-accent-light/[0.10]" />
-          <div className="absolute left-0 right-0 top-[46%] h-px bg-accent-light/[0.12]" />
-          <div className="absolute left-0 right-0 top-[60%] h-px bg-accent-light/[0.10]" />
-          <div className="absolute left-0 right-0 top-[74%] h-px bg-accent-light/[0.07]" />
+          <div className="absolute left-0 right-0 top-[18%] h-px bg-accent-light/7" />
+          <div className="absolute left-0 right-0 top-[32%] h-px bg-accent-light/10" />
+          <div className="absolute left-0 right-0 top-[46%] h-px bg-accent-light/12" />
+          <div className="absolute left-0 right-0 top-[60%] h-px bg-accent-light/10" />
+          <div className="absolute left-0 right-0 top-[74%] h-px bg-accent-light/7" />
         </div>
 
         <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.38em] text-ink-muted">
